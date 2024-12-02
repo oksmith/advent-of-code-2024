@@ -30,7 +30,7 @@ func partone() int {
 func parttwo() int {
 	data := parseInput()
 	isSafe := isSafeArray(data, true)
-	// debugging
+	// // debugging
 	// for i, report := range data {
 	// 	fmt.Println(i, report, isSafe[i])
 	// }
@@ -66,33 +66,25 @@ func isSafe(report []int, removal bool) bool {
 		}
 		diff := float64(report[i] - report[i-1])
 		maxDiff = max(maxDiff, math.Abs(diff))
+	}
 
-		// check for safety at current level - Only relevant for Part 2
-		if removal && (maxDiff > 3 || (!isIncreasing && !isDecreasing)) {
-			// the current level is unsafe. Since `remove` is true
-			// we remove an element from the report and try again.
-			// Not sure which element is best to remove. Try both
-			// and see if one of the new results is safe
-			// Note: I create a new slice here because I don't want to modify
-			// the original array
-
-			// remove element at i-1
-			newReportOne := make([]int, 0, len(report)-1)
-			newReportOne = append(newReportOne, report[:i-1]...)
-			newReportOne = append(newReportOne, report[i:]...)
-
-			// remove element at i
-			newReportTwo := make([]int, 0, len(report)-1)
-			newReportTwo = append(newReportTwo, report[:i]...)
-			newReportTwo = append(newReportTwo, report[i+1:]...)
-
-			// recursive call
-			safeOne := isSafe(newReportOne, false)
-			safeTwo := isSafe(newReportTwo, false)
-			return safeOne || safeTwo
+	safe := (isIncreasing || isDecreasing) && maxDiff <= 3
+	// check for safety at current level - Only relevant for Part 2
+	if removal && !safe {
+		// we remove an element from the report and try again.
+		// Loop through all possible elements and try removing each
+		// Note: I create a new slice here because I don't want to modify
+		// the original array
+		for i := 0; i < len(report); i++ {
+			newReport := make([]int, 0, len(report)-1)
+			newReport = append(newReport, report[:i]...)
+			newReport = append(newReport, report[i+1:]...)
+			if isSafe(newReport, false) {
+				return true
+			}
 		}
 	}
-	return (isIncreasing || isDecreasing) && maxDiff <= 3
+	return safe
 }
 
 func parseInput() [][]int {
