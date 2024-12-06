@@ -12,49 +12,89 @@ import (
 type Rules [100][100]bool
 
 func main() {
-	fmt.Printf("Part 1 result: %d\n", partone())
-	// fmt.Printf("Part 2 result: %d\n", parttwo())
+	p1, p2 := solution()
+	fmt.Printf("Part 1 result: %d\n", p1)
+	fmt.Printf("Part 2 result: %d\n", p2)
 }
 
-func partone() int {
+// func partone() int {
+// 	rules, updates := parseInput()
+// 	ruleTable := ruleTable(rules)
+
+// 	counter := 0
+// 	for _, update := range updates {
+// 		valid := isCorrectlyOrdered(update, ruleTable)
+// 		if valid {
+// 			middleNumber := update[len(update)/2]
+// 			counter += middleNumber
+// 		}
+// 	}
+
+// 	return counter
+// }
+
+func solution() (int, int) {
 	rules, updates := parseInput()
 	ruleTable := ruleTable(rules)
 
-	counter := 0
+	part1 := 0
+	part2 := 0
 	for _, update := range updates {
 		valid := isCorrectlyOrdered(update, ruleTable)
 		if valid {
 			middleNumber := update[len(update)/2]
-			counter += middleNumber
-		}
-	}
-
-	return counter
-}
-
-func parttwo() int {
-	rules, updates := parseInput()
-	ruleTable := ruleTable(rules)
-
-	counter := 0
-	for _, update := range updates {
-		valid := isCorrectlyOrdered(update, ruleTable)
-		if valid {
-			middleNumber := update[len(update)/2]
-			counter += middleNumber
+			part1 += middleNumber
 		} else {
 			orderedUpdate := correctlyOrder(update, ruleTable)
 			middleNumber := orderedUpdate[len(orderedUpdate)/2]
-			counter += middleNumber
+			part2 += middleNumber
 		}
 	}
 
-	return counter
+	return part1, part2
 }
 
 func correctlyOrder(update []int, ruleTable Rules) []int {
-	// hard to do?
-	return update
+	var orderedUpdate []int
+	for i, num := range update {
+		// if there are no elements in orderedUpdate, then we can just append
+		if i == 0 {
+			orderedUpdate = append(orderedUpdate, num)
+			continue
+		}
+
+		toInsert := len(orderedUpdate)
+		for j := 0; j < i; j++ {
+			if ruleTable[orderedUpdate[j]][num] {
+				// this means that num must come after element j
+				// we keep going with the for loop in case there's another element
+				// we need to insert after
+				toInsert = j + 1
+			}
+		}
+
+		if toInsert == len(orderedUpdate) {
+			// in this case, we didn't find any element that num should come after
+			// however... are there any elements num should come before?
+			for j := 0; j < i; j++ {
+				if ruleTable[num][orderedUpdate[j]] {
+					// then num must come before element j
+					toInsert = j
+					break
+				}
+			}
+		}
+
+		// We've found the correct toInsert index. Now let's insert it.
+		if toInsert == len(orderedUpdate) {
+			orderedUpdate = append(orderedUpdate, num)
+		} else {
+			// create space at position toInsert
+			orderedUpdate = append(orderedUpdate[:toInsert+1], orderedUpdate[toInsert:]...)
+			orderedUpdate[toInsert] = num
+		}
+	}
+	return orderedUpdate
 }
 
 func isCorrectlyOrdered(update []int, ruleTable Rules) bool {
