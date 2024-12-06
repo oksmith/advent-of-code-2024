@@ -17,22 +17,6 @@ func main() {
 	fmt.Printf("Part 2 result: %d\n", p2)
 }
 
-// func partone() int {
-// 	rules, updates := parseInput()
-// 	ruleTable := ruleTable(rules)
-
-// 	counter := 0
-// 	for _, update := range updates {
-// 		valid := isCorrectlyOrdered(update, ruleTable)
-// 		if valid {
-// 			middleNumber := update[len(update)/2]
-// 			counter += middleNumber
-// 		}
-// 	}
-
-// 	return counter
-// }
-
 func solution() (int, int) {
 	rules, updates := parseInput()
 	ruleTable := ruleTable(rules)

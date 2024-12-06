@@ -9,8 +9,6 @@ import (
 	"strings"
 )
 
-type Rules [100][100]bool
-
 func main() {
 	partOne, partTwo := solution()
 	fmt.Printf("Part 1 result: %d\n", partOne)
