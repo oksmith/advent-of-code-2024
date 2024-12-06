@@ -45,7 +45,7 @@ func solution() (int, int) {
 	x, y = findStartPos(data)
 	direction = 0
 	loops := 0
-	for loc, _ := range visitedLocations {
+	for loc := range visitedLocations {
 		locSplit := strings.Split(loc, ",")
 		i, _ := strconv.Atoi(locSplit[0])
 		j, _ := strconv.Atoi(locSplit[1])
